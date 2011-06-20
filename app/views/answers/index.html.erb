@@ -1,0 +1,122 @@
+<script type="text/javascript">
+  function vote(value, obj_type, id, click_obj) {
+    container = click_obj.parent();
+
+    $.post("<%= votes_path %>", { vote: {value: value, voteable_type: obj_type, voteable_id: id} }, function(data) {
+      if(data.success) {
+        container.children(".upvote").toggleClass("upvote-on", data.upvote);
+        container.children(".upvote").toggleClass("upvote-off", ! data.upvote);
+        container.children(".downvote").toggleClass("downvote-on", data.downvote);
+        container.children(".downvote").toggleClass("downvote-off", ! data.downvote);
+        container.children(".vote-count-post").text(data.score)
+      }
+      else {
+        str = ""
+        for (var key in data.error) {
+          str += data.error[key] + "\n";
+        }
+        alert(str);
+      }
+    }, "json");
+  }
+
+</script>
+
+<div class="subheader">
+  <h1><%= @question.title %></h1>
+</div>
+
+<p id="notice"><%= notice %></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td class="votecell">
+        <div class="vote">
+          <div class="upvote votearrow <%= voted?(@question, 1) ? 'upvote-on' : 'upvote-off' %>", onclick="vote(1, 'Question', <%= @question.id %>, $(this))"></div>
+          <span class="vote-count-post"> <%= @question.score %> </span>
+          <div class="downvote votearrow <%= voted?(@question, -1) ? 'downvote-on' : 'downvote-off' %>", onclick="vote(-1, 'Question', <%= @question.id %>, $(this))"></div>
+        </div>
+      </td>
+      <td class="postcell">
+        <div class="post-text">
+          <%= @question.text %>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div class="started fr">
+  <div class="user-action-time">asked <span class="relativetime"> <%= time_ago_in_words(@question.created_at) %> ago</span></div>
+  <div class="user-details">
+    by <%= link_to @question.user.login, @question.user %>
+  </div>
+</div>
+
+<% if @question.user == current_user %>
+  <%= link_to 'Edit this question', edit_question_path(@question) %> |
+<% end %>
+
+<%= link_to 'Answer this question', new_question_answer_path(@question) %> | <%= link_to 'Comment on this question', new_question_comment_path(@question) %>
+
+<% if @question.comments.length > 0 %>
+  <div class="subheader">
+    <h1> Comments </h1>
+  </div>
+  <% @question.comments.each do |comment| %>
+    <table>
+      <tbody>
+        <td class="postcell">
+          <div class="post-text">
+            <%= comment.text %> 
+          </div>
+        </td>
+      </tbody>
+    </table>
+    <div class="started fr">
+      <div class="user-action-time">posted <span class="relativetime"> <%= time_ago_in_words(comment.created_at) %> ago</span></div>
+      <div class="user-details">
+        by <%= link_to comment.user.login, comment.user %>
+      </div>
+    </div>
+<% end %>
+<% end %>
+
+<% if @answers.length > 0 %>
+  <div class="subheader">
+    <h1>Answers</h1>
+  </div>
+
+  <% @answers.each do |answer| %>
+    <table>
+      <tbody>
+        <tr>
+          <td class="votecell">
+            <div class="vote">
+              <div class="upvote votearrow <%= voted?(answer, 1) ? 'upvote-on' : 'upvote-off' %>", onclick="vote(1, 'Answer', <%= answer.id %>, $(this))"></div>
+              <span class="vote-count-post"> <%= answer.score %> </span>
+              <div class="downvote votearrow <%= voted?(answer, -1) ? 'downvote-on' : 'downvote-off' %>", onclick="vote(-1, 'Answer', <%= answer.id %>, $(this))"></div>
+            </div>
+          </td>
+          <td class="postcell">
+            <div class="post-text">
+              <%= answer.text %>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="started fr">
+      <div class="user-action-time">posted <span class="relativetime"> <%= time_ago_in_words(answer.created_at) %> ago</span></div>
+      <div class="user-details">
+        by <%= link_to answer.user.login, answer.user %>
+      </div>
+    </div>
+    <% if current_user == answer.user %>
+      <%= link_to "Edit this answer", edit_question_answer_path(answer.question, answer) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+
+
