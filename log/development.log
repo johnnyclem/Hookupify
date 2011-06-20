@@ -145,3 +145,18 @@ DEPRECATION WARNING: Setting filter_parameter_logging in ActionController is dep
   [1m[36mQuestion Load (0.1ms)[0m  [1mSELECT "questions".* FROM "questions" ORDER BY created_at DESC[0m
 Rendered questions/index.html.erb within layouts/application (33.5ms)
 Completed 200 OK in 137ms (Views: 37.9ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/" for 127.0.0.1 at Mon Jun 20 15:54:59 -0700 2011
+DEPRECATION WARNING: Setting filter_parameter_logging in ActionController is deprecated and has no longer effect, please set 'config.filter_parameters' in config/application.rb instead. (called from /Users/jclem/rails_projects/hookupify/app/controllers/application_controller.rb:5)
+  Processing by QuestionsController#index as HTML
+  [1m[36mSQL (0.6ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [1m[35mSQL (0.3ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+  [1m[36mQuestion Load (0.1ms)[0m  [1mSELECT "questions".* FROM "questions" ORDER BY created_at DESC[0m
+Rendered questions/index.html.erb within layouts/application (32.4ms)
+Completed 200 OK in 136ms (Views: 36.6ms | ActiveRecord: 1.1ms)
